@@ -13,7 +13,8 @@ import {
 } from "@heroicons/react/24/outline";
 import toast, { Toaster } from "react-hot-toast";
 
-const API_URL = "http://localhost:3000/api/personalized-message";
+const API_URL =
+  "https://outflo-assignment-backend-7k8c.onrender.com/api/personalized-message";
 
 export default function MessageGenerator() {
   const [formData, setFormData] = useState({

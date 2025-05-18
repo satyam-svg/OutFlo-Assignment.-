@@ -1,6 +1,6 @@
 // src/lib/api.ts
 
-const API_BASE = 'http://localhost:3000/api';
+const API_BASE = 'https://outflo-assignment-backend-7k8c.onrender.com/api';
 
 export interface Campaign {
   id: string;
