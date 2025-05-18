@@ -87,7 +87,8 @@ export default function CampaignPage() {
     setIsLoading(true);
     try {
       await deleteCampaign(id);
-      setCampaigns(campaigns.filter((c) => c.id !== id));
+
+      setCampaigns((prev) => prev.filter((c) => c.id !== id));
     } catch (error) {
       console.error("Error:", error);
     } finally {
