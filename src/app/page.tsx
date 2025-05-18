@@ -57,20 +57,17 @@ export default function CampaignPage() {
         accountIds: formData.accountIds.filter((a) => a.trim()),
       };
 
-      let updatedCampaign: Campaign;
       if (selectedCampaign) {
-        updatedCampaign = await updateCampaign(
+        const updatedCampaign = await updateCampaign(
           selectedCampaign.id,
           campaignData
         );
-        setCampaigns(
-          campaigns.map((c) =>
-            c.id === updatedCampaign.id ? updatedCampaign : c
-          )
+        setCampaigns((prev) =>
+          prev.map((c) => (c.id === updatedCampaign.id ? updatedCampaign : c))
         );
       } else {
-        updatedCampaign = await createCampaign(campaignData);
-        setCampaigns([...campaigns, updatedCampaign]);
+        const newCampaign = await createCampaign(campaignData);
+        setCampaigns((prev) => [...prev, newCampaign]);
       }
 
       setIsModalOpen(false);
@@ -99,14 +96,30 @@ export default function CampaignPage() {
   const handleStatusToggle = async (id: string) => {
     setIsLoading(true);
     try {
-      const campaign = campaigns.find((c) => c.id === id);
-      if (!campaign) return;
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c.id === id
+            ? { ...c, status: c.status === "Active" ? "Inactive" : "Active" }
+            : c
+        )
+      );
 
-      const newStatus = campaign.status === "Active" ? "Inactive" : "Active";
-      const updatedCampaign = await updateCampaign(id, { status: newStatus });
-      setCampaigns(campaigns.map((c) => (c.id === id ? updatedCampaign : c)));
+      await updateCampaign(id, {
+        status:
+          campaigns.find((c) => c.id === id)?.status === "Active"
+            ? "Inactive"
+            : "Active",
+      });
     } catch (error) {
       console.error("Error:", error);
+      // Rollback on error
+      setCampaigns((prev) =>
+        prev.map((c) =>
+          c.id === id
+            ? { ...c, status: c.status === "Active" ? "Inactive" : "Active" }
+            : c
+        )
+      );
     } finally {
       setIsLoading(false);
     }
